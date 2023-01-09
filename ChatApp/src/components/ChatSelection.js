@@ -11,14 +11,14 @@ const ChatTabs = styled(Tabs)({
         backgroundColor: 'transparent',
     },
     '& .MuiTab-root.Mui-selected': {
-        backgroundColor: '#252f3c !important',
+        backgroundColor: '#2b253c !important',
         color: 'white',
 
     },
     '& .MuiButtonBase-root.MuiTab-root': {
         borderRadius: 10,
         ':hover': {
-            backgroundColor: '#2f2f32'
+            backgroundColor: '#302f32'
         }
     },
 });
@@ -120,7 +120,7 @@ const ChatSelection = (props) => {
                                     ""
                                 )}
                                 sx={{ color: 'white', justifyContent: 'left', paddingLeft: '10px' }}
-                                icon={<Avatar sx={{ bgcolor: '#00ff66', color: 'black' }}><div className='MyFont'>{chatRoom.chatName.charAt(0).toUpperCase()}</div></Avatar>}
+                                icon={<Avatar sx={{ bgcolor: '#9c49f3', color: 'black' }}><div className='MyFont'>{chatRoom.chatName.charAt(0).toUpperCase()}</div></Avatar>}
                                 iconPosition='start'
                             />
                         )}

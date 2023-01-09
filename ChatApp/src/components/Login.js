@@ -35,8 +35,10 @@ const CssTextField = styled(TextField)({
 });
 
 const LoginButton = styled(Button)({
-  background: 'linear-gradient(45deg, #33aa22, #00ff66)',
+  //background: 'linear-gradient(45deg, #33aa22, #00ff66)',
+  background: '#9c49f3',
   color: 'black',
+  fontWeight: 'bold'
 });
 
 const SignUpButton = styled(Button)({

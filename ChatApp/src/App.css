@@ -1,5 +1,5 @@
 body {
-  background-color: #1f1f22;
+  background-color: #201f22;
 }
 
 .App {
@@ -17,6 +17,8 @@ body {
   overflow: hidden;
 }
 
+
+/* moje */
 .gradient-background {
   background: linear-gradient(300deg,deepskyblue,darkviolet,#ed205d,#ed9320);
   background-size: 240% 240%;

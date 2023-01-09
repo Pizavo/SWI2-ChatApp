@@ -31,7 +31,7 @@ const SendButton = styled(IconButton)({
 const ChatWindow = (props) => {
 
   const [message, setMessage] = useState("");
-  
+
   const formRef = useRef(null);
 
   function send(e) {
@@ -93,19 +93,19 @@ const ChatWindow = (props) => {
                 <Box key={index} sx={{ paddingBottom: '10px', width: '100%', overflow: 'auto' }}>
                   {msg.chatUser.userId === props.user.userId ? (
                       <div>
-                        <div style={{ padding: '10px', float: 'right', clear: 'both', textAlign: 'left', fontSize: '12px'}}>
-                          <b>{msg.chatUser.username}</b> {formatDate(msg.sendTime)}
+                        <div style={{ padding: '10px', float: 'right', clear: 'both', textAlign: 'left', fontSize: '11px'}}>
+                            <span style={{fontSize: '13px'}}><b>{msg.chatUser.username}</b></span> {formatDate(msg.sendTime)}
                         </div>
-                        <Box sx={{ padding: '10px', float: 'right', clear: 'both', textAlign: 'left', backgroundColor: '#057eff', borderRadius: '15px', maxWidth: '75%' }}>
+                        <Box sx={{ padding: '10px', float: 'right', clear: 'both', textAlign: 'left', backgroundColor: '#7505ff', borderRadius: '15px', maxWidth: '75%' }}>
                           {msg.content}
                         </Box>
                       </div>
                   ) : (
                     <div>
-                      <div style={{ padding: '10px', float: 'left', clear: 'both', textAlign: 'left', fontSize: '12px'}}>
-                        <b>{msg.chatUser.username}</b> {formatDate(msg.sendTime)}
+                      <div style={{ padding: '10px', float: 'left', clear: 'both', textAlign: 'left', fontSize: '11px'}}>
+                        <span style={{fontSize: '13px'}}><b>{msg.chatUser.username}</b></span> {formatDate(msg.sendTime)}
                       </div>
-                      <Box sx={{ padding: '10px', float: 'left', clear: 'both', textAlign: 'left', backgroundColor: '#39393c', borderRadius: '15px', maxWidth: '75%' }}>
+                      <Box sx={{ padding: '10px', float: 'left', clear: 'both', textAlign: 'left', backgroundColor: '#494157', borderRadius: '15px', maxWidth: '75%' }}>
                         {msg.content}
                       </Box>
                     </div>
