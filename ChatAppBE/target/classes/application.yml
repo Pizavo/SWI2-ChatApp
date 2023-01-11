@@ -1,15 +1,17 @@
 app:
   name: ChatAppBE
 spring:
-  h2:
-    console:
-      enabled: true
   datasource:
     url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
     password: password
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: create
 server:
   port: 8081
+rabbitmq:
+  host: localhost
+  virtualhost: /
+  username: guest
+  password: guest

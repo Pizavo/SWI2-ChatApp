@@ -1,4 +1,4 @@
-package cz.osu.chatappbe.Rabbit;
+package cz.osu.chatappbe.rabbit;
 
 import com.google.gson.Gson;
 import org.springframework.amqp.core.AmqpTemplate;

@@ -1,4 +1,4 @@
-package cz.osu.chatappbe.Rabbit;
+package cz.osu.chatappbe.rabbit;
 
 import org.springframework.stereotype.Component;
 

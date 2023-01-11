@@ -1,4 +1,4 @@
-package cz.osu.chatappbe.Config;
+package cz.osu.chatappbe.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
