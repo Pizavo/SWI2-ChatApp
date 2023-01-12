@@ -24,8 +24,8 @@ public class ChatUser {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(nullable = false)
-	private UUID id;
-	@OneToMany(mappedBy = "chatUser")
+	private Integer id;
+	@OneToMany(mappedBy = "user")
 	private List<Message> messages = new ArrayList<>();
 	
 	@Column(nullable = false)
@@ -54,6 +54,6 @@ public class ChatUser {
 	
 	public void addMessage(Message message) {
 		this.messages.add(message);
-		message.setChatUser(this);
+		message.setUser(this);
 	}
 }

@@ -29,11 +29,7 @@ public class DbController {
 	
 	@GetMapping("/chatrooms")
 	public ResponseEntity<List<ChatRoom>> getChatRooms(@RequestParam String username) {
-		System.out.println(username);
-		List<ChatRoom> chatRooms = chatRoomService.getUserRooms(username);
-		System.out.println(chatRooms);
-		
-		return new ResponseEntity<>(chatRooms, HttpStatus.OK);
+		return new ResponseEntity<>(chatRoomService.getUserRooms(username), HttpStatus.OK);
 	}
 	
 }

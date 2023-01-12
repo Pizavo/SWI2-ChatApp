@@ -19,12 +19,12 @@ public class ChatRoom {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(nullable = false)
-    private UUID id;
+    private Integer id;
     
     @ManyToMany(mappedBy = "joinedRooms")
     private List<ChatUser> joinedUsers = new ArrayList<>();
     
-    @OneToMany(mappedBy = "chatRoom")
+    @OneToMany(mappedBy = "room")
     private List<Message> messages = new ArrayList<>();
     
     @Column(nullable = false)
@@ -33,17 +33,21 @@ public class ChatRoom {
     @Column(nullable = false)
     private Boolean isPublic;
     
+    @Column(nullable = false)
+    private Boolean isGroup;
+    
     public ChatRoom(ChatRoom chatRoom) {
         this.id = chatRoom.getId();
         this.joinedUsers = new ArrayList<>(chatRoom.getJoinedUsers());
         this.messages = new ArrayList<>(chatRoom.getMessages());
         this.name = chatRoom.getName();
         this.isPublic = chatRoom.getIsPublic();
+        this.isGroup = chatRoom.getIsGroup();
     }
     
     public void addMessage(Message message) {
         this.messages.add(message);
-        message.setChatRoom(this);
+        message.setRoom(this);
     }
     
 }

@@ -10,6 +10,6 @@ import java.util.UUID;
 @Getter
 @Setter
 public class UserToken {
-	private UUID userId;
+	private Integer id;
 	private String username;
 }

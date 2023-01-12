@@ -11,9 +11,9 @@ public class Sender {
     @Autowired
     private AmqpTemplate rabbitTemplate;
 
-    public void sendPublic(String exchange, String msg) {
+    public void send(String exchange, String msg) {
         Gson gson = new Gson();
         String msgJson = gson.toJson(msg);
-        rabbitTemplate.convertAndSend(exchange, "", msgJson);
+        rabbitTemplate.convertAndSend(exchange, msgJson);
     }
 }

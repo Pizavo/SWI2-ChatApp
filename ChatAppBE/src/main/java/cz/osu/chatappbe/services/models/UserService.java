@@ -64,4 +64,8 @@ public class UserService {
 	public Optional<ChatUser> get(String username) {
 		return repository.findUserByUsernameIgnoreCase(username);
 	}
+	
+	public Optional<ChatUser> get(Integer id) {
+		return repository.findById(id);
+	}
 }

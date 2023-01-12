@@ -26,10 +26,12 @@ public class RabbitController {
 	public List<Message> getMessage(@RequestParam String username) {
 		List<Message> receivedMessages = new ArrayList<>();
 		while (Objects.requireNonNull(admin.getQueueInfo("public-queue-" + username)).getMessageCount() != 0) {
-			String foo = (String) rabbitTemplate.receiveAndConvert("public-queue-" + username);
+			/*String foo = (String) rabbitTemplate.receiveAndConvert("public-queue-" + username);
 			Gson gson = new Gson();
 			Message message = gson.fromJson(foo, Message.class);
-			receivedMessages.add(message);
+			receivedMessages.add(message);*/
+			//receivedMessages.add((Message) rabbitTemplate.receiveAndConvert("public-queue-" + username));
+			System.out.println(rabbitTemplate.receiveAndConvert("public-queue-" + username));
 		}
 		return receivedMessages;
 	}

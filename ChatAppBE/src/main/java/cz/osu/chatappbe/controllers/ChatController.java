@@ -33,6 +33,7 @@ public class ChatController {
 	}
 	
 	@MessageMapping("/private-message")
+	//@SendTo("/user/{username}/private")
 	public PayloadMsg receivePrivateMessage(@Payload PayloadMsg msg) {
 		return messagingService.receivePrivateMessage(msg);
 	}

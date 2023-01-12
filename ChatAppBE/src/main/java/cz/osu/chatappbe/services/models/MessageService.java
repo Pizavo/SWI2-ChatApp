@@ -7,6 +7,7 @@ import cz.osu.chatappbe.repositories.MessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
 @Service
@@ -28,16 +29,16 @@ public class MessageService {
 	private Message create(ChatUser user, ChatRoom chatRoom, String content, Calendar date) {
 		Message message = new Message();
 		
-		/*chatRoom.setMessages(null);
-		chatRoom.setJoinedUsers(null);
+		/*chatRoom.setMessages(new ArrayList<>());
+		chatRoom.setJoinedUsers(new ArrayList<>());
 		
-		user.setMessages(null);
-		user.setJoinedRooms(null);*/
+		user.setMessages(new ArrayList<>());
+		user.setJoinedRooms(new ArrayList<>());*/
 		
 		message.setContent(content);
 		message.setSendTime(date.getTime());
-		message.setChatRoom(chatRoom);
-		message.setChatUser(user);
+		message.setRoom(chatRoom);
+		message.setUser(user);
 		
 		return repository.save(message);
 	}

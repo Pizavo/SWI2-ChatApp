@@ -15,7 +15,6 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 public class MessagingService {
@@ -31,7 +30,7 @@ public class MessagingService {
 	private Sender sender;
 	
 	public PayloadMsg receivePublicMessage(PayloadMsg msg) {
-		Optional<ChatUser> user = userService.get(msg.getSenderName());
+		Optional<ChatUser> user = userService.get(msg.getSenderId());
 		Optional<ChatRoom> room = chatRoomService.getPublicRoom();
 		
 		if (user.isEmpty() || room.isEmpty()) {
@@ -39,20 +38,19 @@ public class MessagingService {
 		}
 		
 		//ChatUser user = user.get();
-		
 		Message publicMessage = messageService.create(user.get(), room.get(), msg.getContent(), msg.getDate());
 		
 		/*ChatRoom receivingRoom = new ChatRoom(dbService.getPublicChatroom());
-		receivingRoom.setMessages(null);
-		receivingRoom.setJoinedUsers(null);
+		receivingRoom.setMessages(new ArrayList<>());
+		receivingRoom.setJoinedUsers(new ArrayList<>());
 		publicMessage.setChatRoom(receivingRoom);
 		
 		ChatUser senderUser = new ChatUser(dbService.getUser(msg.getSenderName()).get());
-		senderUser.setMessages(null);
-		senderUser.setJoinedRooms(null);
+		senderUser.setMessages(new ArrayList<>());
+		senderUser.setJoinedRooms(new ArrayList<>());
 		publicMessage.setChatUser(senderUser);*/
 		
-		sender.sendPublic(RabbitMQConfig.exchange, String.valueOf(publicMessage));
+		this.sender.send(RabbitMQConfig.exchange, String.valueOf(publicMessage));
 		
 		return msg;
 	}
@@ -62,17 +60,30 @@ public class MessagingService {
 		// todo: asi ulozit zpravu do databaze (vzdy ji uklada ten, co ji odesila)
 		// todo: poslat web socket zpravu aby si uzivatel vyzvedl zpravu z queue pokud je prihlaseny
 		
-		Optional<ChatUser> user = userService.get(msg.getSenderName());
-		Optional<ChatRoom> room = chatRoomService.getGroupRoom(UUID.fromString(msg.getReceiverGroupId()));
+		Optional<ChatUser> optionalUser = userService.get(msg.getSenderId());
+		Optional<ChatRoom> optionalRoom = chatRoomService.get(msg.getChatId());
 		
-		if (user.isEmpty() || room.isEmpty()) {
+		if (optionalUser.isEmpty() || optionalRoom.isEmpty()) {
 			return null;
 		}
 		
-		Message publicMessage = messageService.create(user.get(), room.get(), msg.getContent(), msg.getDate());
+		ChatUser user = optionalUser.get();
+		ChatRoom room = optionalRoom.get();
 		
-		String destination = "/chatroom/" + msg.getReceiverGroupId();
-		simpMessagingTemplate.convertAndSend(destination, msg);
+		Message message = messageService.create(user, room, msg.getContent(), msg.getDate());
+		
+		System.out.println(user.getId());
+		
+		room.getJoinedUsers().forEach(u -> {
+			System.out.println(u.getId());
+			if (!u.getId().equals(user.getId())) {
+				this.sender.send("public-queue-" + u.getUsername(), String.valueOf(message));
+				System.out.println(" sent");
+			}
+		});
+		
+		/*String destination = "/chatroom/" + msg.getChatId();
+		simpMessagingTemplate.convertAndSend(destination, msg);*/
 		return msg;
 	}
 	
@@ -81,8 +92,28 @@ public class MessagingService {
 		// todo: asi ulozit zpravu do databaze (vzdy ji uklada ten, co ji odesila)
 		// todo: poslat web socket zpravu aby si uzivatel vyzvedl zpravu z queue pokud je prihlaseny
 		
+		Optional<ChatUser> optionalSender = userService.get(msg.getSenderId());
+		//Optional<ChatUser> optionalReceiver = userService.get(msg.getReceiverChatId());
+		Optional<ChatRoom> optionalRoom = chatRoomService.get(msg.getChatId());
+		
+		if (optionalSender.isEmpty() || optionalRoom.isEmpty()) {
+			return null;
+		}
+		
+		ChatUser sender = optionalSender.get();
+		ChatRoom room = optionalRoom.get();
+		
+		Optional<ChatUser> optionalReceiver = room.getJoinedUsers().stream().filter(u -> !u.getId().equals(sender.getId())).findFirst();
+		
+		if (optionalReceiver.isEmpty()) {
+			return null;
+		}
+		
+		Message message = messageService.create(sender, room, msg.getContent(), msg.getDate());
+		
 		// url: /user/username/private
-		simpMessagingTemplate.convertAndSendToUser(msg.getReceiverName(), "/private", msg);
+		//simpMessagingTemplate.convertAndSendToUser(optionalReceiver.get().getUsername(), "/private", msg);
+		this.sender.send("public-queue-" + optionalReceiver.get().getUsername(), String.valueOf(message));
 		return msg;
 	}
 }

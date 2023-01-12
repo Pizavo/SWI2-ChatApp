@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.UUID;
 
@@ -12,19 +13,19 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Message {
+public class Message implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(nullable = false)
-	private UUID id;
+	private Integer id;
 	
 	@ManyToOne
 	@JoinColumn(name = "chat_room_id", nullable = false)
-	private ChatRoom chatRoom;
+	private ChatRoom room;
 	
 	@ManyToOne
 	@JoinColumn(name = "chat_user_id", nullable = false)
-	private ChatUser chatUser;
+	private ChatUser user;
 	
 	@Column(nullable = false)
 	private String content;

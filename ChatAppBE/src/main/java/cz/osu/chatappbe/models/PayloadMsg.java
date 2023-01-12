@@ -8,9 +8,8 @@ import lombok.*;
 @AllArgsConstructor
 @ToString
 public class PayloadMsg {
-	private String senderName;
-	private String receiverName;
-	private String receiverGroupId;
+	private Integer senderId;
+	private Integer chatId;
 	private String content;
 	private String date;
 	
