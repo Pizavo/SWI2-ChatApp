@@ -22,7 +22,6 @@ const Menu = (props) => {
 		await setActiveChat(
 			await axios.get(LOCALHOST_URL + '/api/chatroom/' + newChatId)
 			           .then(result => {
-				           console.log(result.data)
 				           return result.data
 			           })
 			           .catch(error => {
@@ -93,7 +92,7 @@ const Menu = (props) => {
 	}
 	
 	function onPrivateMessageReceived(payload) {
-		let payloadData = JSON.parse(payload.body)
+		//let payloadData = JSON.parse(payload.body)
 		
 		/*
 		if (privateChats.get(payloadData.senderName)) {
@@ -115,7 +114,6 @@ const Menu = (props) => {
 		try {
 			const result = axios.get(url, {params})
 			                    .then(result => {
-				                    // ulozit zpravy
 				                    console.log(result.data)
 				
 				                    result.data.forEach(i => {
@@ -137,12 +135,9 @@ const Menu = (props) => {
 	}
 	
 	function sendMessage(message) {
-		// odeslat nejakou message
-		
 		if (activeChat.isPublic) {
 			sendPublicMessage(message)
 		} else if (activeChat.isGroup) {
-			console.log(props.user)
 			sendGroupMessage(message)
 		} else {
 			sendPrivateMessage(message)

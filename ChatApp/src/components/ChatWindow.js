@@ -51,10 +51,6 @@ const ChatWindow = (props) => {
 		return new Date(dateTime).toLocaleDateString(undefined, options)
 	}
 	
-	/*console.log(props.activeChat);
-	console.log(props.privateChats);
-	console.log(props.activeChat)*/
-	
 	return (
 		<>
 			{props.isLoading ? (

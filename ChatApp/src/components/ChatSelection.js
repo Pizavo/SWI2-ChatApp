@@ -36,13 +36,13 @@ const ChatSelection = (props) => {
 		try {
 			await axios.get(url, {params})
 			           .then(async (result) => {
-				           console.log(result.data)
 				           result.data.forEach(i => setChatRooms((rooms) => [...rooms, {
 					           id: i.id,
 					           name: i.name,
 					           messages: i.messages,
 				           }]))
 				           try {
+							   console.log(result.data)
 					           await props.handleChatChange(e, result.data[0]?.id)
 				           } catch (e) {
 					           console.log('No chats available!')
@@ -52,12 +52,8 @@ const ChatSelection = (props) => {
 					           result.data.forEach(i => {
 						           let msgList = []
 						           i.messages.forEach(j => msgList.push(j))
-						           // props.privateChats.set(i.id, msgList);
 						
 						           props.privateChats.set(i.id, msgList)
-						
-						           // console.log(props.privateChats);
-						
 						           props.setPrivateChats(new Map(props.privateChats))
 					           })
 				           } catch (e) {
