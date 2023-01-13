@@ -5,15 +5,19 @@ import cz.osu.chatappbe.models.DB.ChatRoom;
 import cz.osu.chatappbe.models.DB.ChatUser;
 import cz.osu.chatappbe.models.DB.Message;
 import cz.osu.chatappbe.models.PayloadMsg;
-import cz.osu.chatappbe.rabbit.Sender;
 import cz.osu.chatappbe.services.models.ChatRoomService;
 import cz.osu.chatappbe.services.models.MessageService;
 import cz.osu.chatappbe.services.models.UserService;
+import org.springframework.amqp.core.AmqpAdmin;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -21,13 +25,15 @@ public class MessagingService {
 	@Autowired
 	private SimpMessagingTemplate simpMessagingTemplate;
 	@Autowired
+	private AmqpTemplate rabbitTemplate;
+	@Autowired
+	private AmqpAdmin admin;
+	@Autowired
 	private MessageService messageService;
 	@Autowired
 	private UserService userService;
 	@Autowired
 	private ChatRoomService chatRoomService;
-	@Autowired
-	private Sender sender;
 	
 	public PayloadMsg receivePublicMessage(PayloadMsg msg) {
 		Optional<ChatUser> user = userService.get(msg.getSenderId());
@@ -50,7 +56,7 @@ public class MessagingService {
 		senderUser.setJoinedRooms(new ArrayList<>());
 		publicMessage.setChatUser(senderUser);*/
 		
-		this.sender.send(RabbitMQConfig.exchange, String.valueOf(publicMessage));
+		this.send(RabbitMQConfig.exchange, publicMessage);
 		
 		return msg;
 	}
@@ -77,7 +83,7 @@ public class MessagingService {
 		room.getJoinedUsers().forEach(u -> {
 			System.out.println(u.getId());
 			if (!u.getId().equals(user.getId())) {
-				this.sender.send("public-queue-" + u.getUsername(), String.valueOf(message));
+				this.send("public-queue-" + u.getUsername(), message);
 				System.out.println(" sent");
 			}
 		});
@@ -113,7 +119,21 @@ public class MessagingService {
 		
 		// url: /user/username/private
 		//simpMessagingTemplate.convertAndSendToUser(optionalReceiver.get().getUsername(), "/private", msg);
-		this.sender.send("public-queue-" + optionalReceiver.get().getUsername(), String.valueOf(message));
+		this.send("public-queue-" + optionalReceiver.get().getUsername(), message);
 		return msg;
+	}
+	
+	public void send(String exchange, Message message) {
+		rabbitTemplate.convertAndSend(exchange, messageService.prepareForRabbit(message));
+	}
+	
+	public List<Message> receive(String queueName) {
+		List<Message> receivedMessages = new ArrayList<>();
+		
+		while (Objects.requireNonNull(admin.getQueueInfo(queueName)).getMessageCount() != 0) {
+			receivedMessages.add(messageService.receiveFromRabbit(rabbitTemplate.receiveAndConvert(queueName)));
+		}
+		
+		return receivedMessages;
 	}
 }

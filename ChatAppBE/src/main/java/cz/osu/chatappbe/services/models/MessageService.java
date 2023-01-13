@@ -1,5 +1,6 @@
 package cz.osu.chatappbe.services.models;
 
+import com.google.gson.Gson;
 import cz.osu.chatappbe.models.DB.ChatRoom;
 import cz.osu.chatappbe.models.DB.ChatUser;
 import cz.osu.chatappbe.models.DB.Message;
@@ -14,6 +15,7 @@ import java.util.Calendar;
 public class MessageService {
 	@Autowired
 	private MessageRepository repository;
+	private final Gson gson = new Gson();
 	
 	public Message create(ChatUser user, ChatRoom chatRoom, String content, String date) {
 		Calendar calendar = Calendar.getInstance();
@@ -41,5 +43,18 @@ public class MessageService {
 		message.setUser(user);
 		
 		return repository.save(message);
+	}
+	
+	public String prepareForRabbit(Message message) {
+		message.getRoom().setMessages(new ArrayList<>());
+		message.getRoom().setJoinedUsers(new ArrayList<>());
+		message.getUser().setMessages(new ArrayList<>());
+		message.getUser().setJoinedRooms(new ArrayList<>());
+		
+		return this.gson.toJson(message);
+	}
+	
+	public Message receiveFromRabbit(Object message) {
+		return this.gson.fromJson((String) message, Message.class);
 	}
 }
