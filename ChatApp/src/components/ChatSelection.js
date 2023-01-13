@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react'
-import {Avatar, Box, Grid, IconButton, Tab, Tabs, Typography} from '@mui/material'
+import {Avatar, Box, Grid, IconButton, Tab, Tabs, Tooltip, Typography} from '@mui/material'
 import {styled} from '@mui/material/styles'
 import AddCommentIcon from '@mui/icons-material/AddComment'
 import axios from 'axios'
@@ -119,9 +119,11 @@ const ChatSelection = (props) => {
 							}),
 						}}
 						>
-							<IconButton sx={{paddingLeft: '0px'}} onClick={addGroupChat}>
-								<AddCommentIcon sx={{color: 'white'}}></AddCommentIcon>
-							</IconButton>
+							<Tooltip title="Create group" placement="left" arrow>
+								<IconButton sx={{paddingLeft: '0px'}} onClick={addGroupChat}>
+									<AddCommentIcon sx={{color: 'white'}}></AddCommentIcon>
+								</IconButton>
+							</Tooltip>
 						</Grid>
 					</Grid>
 					<ChatTabs

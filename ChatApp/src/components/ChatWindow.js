@@ -74,7 +74,7 @@ const ChatWindow = (props) => {
 							<form onSubmit={send} ref={formRef}>
 								<div className="MessageInput">
 									<SendButton type="submit">
-										<SendRounded color="primary"/>
+										<SendRounded color="secondary"/>
 									</SendButton>
 									<div>
 										<TextInput
@@ -154,6 +154,5 @@ const ChatWindow = (props) => {
 		</>
 	)
 }
-// zpráva: "max-width: calc(100% - var(--mwp-message-list-actions-width,62px) - 5px);" - z facebooku
 
 export default ChatWindow

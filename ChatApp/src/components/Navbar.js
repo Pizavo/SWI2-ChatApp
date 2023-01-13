@@ -1,7 +1,7 @@
 import React from 'react'
-import {AppBar, Avatar, IconButton, Stack, Toolbar, Typography, useMediaQuery, useTheme} from '@mui/material'
+import {AppBar, Avatar, IconButton, Stack, Toolbar, Tooltip, Typography, useMediaQuery, useTheme} from '@mui/material'
 import {styled} from '@mui/material/styles'
-import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer'
+import TelegramIcon from '@mui/icons-material/Telegram'
 import LogoutIcon from '@mui/icons-material/Logout'
 
 const LogoutText = styled(Typography)({
@@ -31,8 +31,8 @@ const Navbar = (props) => {
 	return (
 		<AppBar position="static" sx={{background: '#18181a', borderBottom: 1, borderColor: '#999b9d'}} elevation={0}>
 			<Toolbar>
-				<IconButton size="large" edge="start" color="inherit">
-					<QuestionAnswerIcon sx={{color: '#9c49f3'}}/>
+				<IconButton size="large" edge="start" color="inherit" sx={{cursor: 'default'}}>
+					<TelegramIcon sx={{color: '#9c49f3'}}/>
 				</IconButton>
 				{isSmallRes ? (
 					<></>
@@ -43,9 +43,15 @@ const Navbar = (props) => {
 				)}
 				{props.user ? (
 					<Stack direction="row" spacing={2} marginLeft="auto" alignItems="center">
-						<Avatar sx={{bgcolor: '#9c49f3', color: 'black'}}>
-							<div className="MyFont">{props.user.username.charAt(0).toUpperCase()}</div>
-						</Avatar>
+						<Tooltip title={
+							<React.Fragment>
+								{"Now logged in: "}<b style={{color: '#d3abff'}}>{props.user.username}</b>
+							</React.Fragment>
+						} placement="left" arrow>
+							<Avatar sx={{bgcolor: '#9c49f3', color: 'black'}}>
+								<div className="MyFont">{props.user.username.charAt(0).toUpperCase()}</div>
+							</Avatar>
+						</Tooltip>
 						<LogoutIconButton color="inherit" onClick={logout}>
 							<LogoutIcon color="inherit" sx={{transition: 'background 0.3s, color 0.3s'}}/>
 							<LogoutText variant="button">
