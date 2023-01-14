@@ -43,20 +43,9 @@ public class MessagingService {
 			return null;
 		}
 		
-		//ChatUser user = user.get();
-		Message publicMessage = messageService.create(user.get(), room.get(), msg.getContent(), msg.getDate());
+		Message message = messageService.create(user.get(), room.get(), msg.getContent(), msg.getDate());
 		
-		/*ChatRoom receivingRoom = new ChatRoom(dbService.getPublicChatroom());
-		receivingRoom.setMessages(new ArrayList<>());
-		receivingRoom.setJoinedUsers(new ArrayList<>());
-		publicMessage.setChatRoom(receivingRoom);
-		
-		ChatUser senderUser = new ChatUser(dbService.getUser(msg.getSenderName()).get());
-		senderUser.setMessages(new ArrayList<>());
-		senderUser.setJoinedRooms(new ArrayList<>());
-		publicMessage.setChatUser(senderUser);*/
-		
-		this.send(RabbitMQConfig.exchange, publicMessage);
+		this.send(RabbitMQConfig.exchange, message);
 		
 		return msg;
 	}
@@ -83,9 +72,9 @@ public class MessagingService {
 				this.send("public-queue-" + u.getUsername(), message);
 			}
 		});
-		
-		/*String destination = "/chatroom/" + msg.getChatId();
-		simpMessagingTemplate.convertAndSend(destination, msg);*/
+
+//		String destination = "/chatroom/" + msg.getChatId();
+//		simpMessagingTemplate.convertAndSend(destination, msg);
 		return msg;
 	}
 	
@@ -95,7 +84,6 @@ public class MessagingService {
 		// todo: poslat web socket zpravu aby si uzivatel vyzvedl zpravu z queue pokud je prihlaseny
 		
 		Optional<ChatUser> optionalSender = userService.get(msg.getSenderId());
-		//Optional<ChatUser> optionalReceiver = userService.get(msg.getReceiverChatId());
 		Optional<ChatRoom> optionalRoom = chatRoomService.get(msg.getChatId());
 		
 		if (optionalSender.isEmpty() || optionalRoom.isEmpty()) {
@@ -112,9 +100,9 @@ public class MessagingService {
 		}
 		
 		Message message = messageService.create(sender, room, msg.getContent(), msg.getDate());
-		
-		// url: /user/username/private
-		//simpMessagingTemplate.convertAndSendToUser(optionalReceiver.get().getUsername(), "/private", msg);
+
+//		 url: /user/username/private
+//		simpMessagingTemplate.convertAndSendToUser(optionalReceiver.get().getUsername(), "/private", msg);
 		this.send("public-queue-" + optionalReceiver.get().getUsername(), message);
 		return msg;
 	}

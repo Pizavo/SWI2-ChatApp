@@ -1,17 +1,17 @@
 package cz.osu.chatappbe.models.DB;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
+@Builder
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class Message implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -32,4 +32,14 @@ public class Message implements Serializable {
 	@Column(nullable = false)
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date sendTime;
+	
+	public String toString() {
+		return "Message{" +
+				"id=" + id +
+				", room=" + room.getId() +
+				", user=" + user.getId() +
+				", content='" + content + '\'' +
+				", sendTime=" + sendTime +
+				'}';
+	}
 }

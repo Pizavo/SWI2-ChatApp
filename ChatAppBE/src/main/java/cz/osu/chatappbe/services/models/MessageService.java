@@ -31,12 +31,6 @@ public class MessageService {
 	private Message create(ChatUser user, ChatRoom chatRoom, String content, Calendar date) {
 		Message message = new Message();
 		
-		/*chatRoom.setMessages(new ArrayList<>());
-		chatRoom.setJoinedUsers(new ArrayList<>());
-		
-		user.setMessages(new ArrayList<>());
-		user.setJoinedRooms(new ArrayList<>());*/
-		
 		message.setContent(content);
 		message.setSendTime(date.getTime());
 		message.setRoom(chatRoom);
@@ -46,10 +40,13 @@ public class MessageService {
 	}
 	
 	public String prepareForRabbit(Message message) {
-		message.getRoom().setMessages(new ArrayList<>());
+		/*message.getRoom().setMessages(new ArrayList<>());
 		message.getRoom().setJoinedUsers(new ArrayList<>());
 		message.getUser().setMessages(new ArrayList<>());
-		message.getUser().setJoinedRooms(new ArrayList<>());
+		message.getUser().setJoinedRooms(new ArrayList<>());*/
+		
+		message.setRoom(null);
+		message.setUser(null);
 		
 		return this.gson.toJson(message);
 	}

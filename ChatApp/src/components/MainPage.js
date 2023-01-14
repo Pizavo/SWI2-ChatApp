@@ -149,6 +149,7 @@ const Menu = (props) => {
 		if (stompClient) {
 			let payloadMsg = {
 				senderId: props.user.id,
+				chatId: activeChat.id,
 				content: message,
 				date: new Date().getTime(),
 			}

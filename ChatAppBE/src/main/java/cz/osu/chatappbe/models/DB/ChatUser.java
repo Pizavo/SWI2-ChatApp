@@ -56,4 +56,12 @@ public class ChatUser implements Serializable {
 		this.messages.add(message);
 		message.setUser(this);
 	}
+	
+	public String toString() {
+		return "ChatUser{" +
+				"id=" + id +
+				", username='" + username + '\'' +
+				", password='" + password + '\'' +
+				'}';
+	}
 }
