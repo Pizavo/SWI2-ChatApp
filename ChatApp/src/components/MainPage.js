@@ -136,19 +136,31 @@ const Menu = (props) => {
 	
 	function sendMessage(message) {
 		if (activeChat.isPublic) {
-			sendPublicMessage(message)
+			sendStompMessage(message, '/app/message')
 		} else if (activeChat.isGroup) {
-			sendGroupMessage(message)
+			sendStompMessage(message, '/app/group-message')
 		} else {
-			sendPrivateMessage(message)
+			sendStompMessage(message, '/app/private-message')
 		}
 		
+	}
+	
+	function sendStompMessage(message, destination) {
+		if (stompClient) {
+			let payloadMsg = {
+				senderId: props.user.id,
+				content: message,
+				date: new Date().getTime(),
+			}
+			stompClient.send(destination, {}, JSON.stringify(payloadMsg))
+		}
 	}
 	
 	function sendPublicMessage(message) {
 		if (stompClient) {
 			let payloadMsg = {
 				senderId: props.user.id,
+				chatId: activeChat.id,
 				content: message,
 				date: new Date().getTime(),
 			}

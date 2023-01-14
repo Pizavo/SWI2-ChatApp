@@ -29,7 +29,6 @@ public class DbController {
 	
 	@GetMapping("/chatrooms")
 	public ResponseEntity<List<ChatRoom>> getChatRooms(@RequestParam String username) {
-		System.out.println(username);
 		return new ResponseEntity<>(chatRoomService.getUserRooms(username), HttpStatus.OK);
 	}
 	

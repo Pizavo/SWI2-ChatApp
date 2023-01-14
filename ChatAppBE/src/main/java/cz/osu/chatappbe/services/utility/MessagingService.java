@@ -78,13 +78,9 @@ public class MessagingService {
 		
 		Message message = messageService.create(user, room, msg.getContent(), msg.getDate());
 		
-		System.out.println(user.getId());
-		
 		room.getJoinedUsers().forEach(u -> {
-			System.out.println(u.getId());
 			if (!u.getId().equals(user.getId())) {
 				this.send("public-queue-" + u.getUsername(), message);
-				System.out.println(" sent");
 			}
 		});
 		

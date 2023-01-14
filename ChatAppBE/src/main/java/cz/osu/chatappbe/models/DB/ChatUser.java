@@ -5,15 +5,15 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
-public class ChatUser {
+public class ChatUser implements Serializable {
 	@ManyToMany
 	@JoinTable(
 			name = "chat_member",

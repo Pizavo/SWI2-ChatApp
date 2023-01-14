@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -86,8 +85,6 @@ public class ChatRoomService {
 	
 	public List<ChatRoom> getUserRooms(String username) {
 		List<ChatRoom> rooms = this.repository.findByJoinedUsers_Username(username);
-		
-		System.out.println(rooms);
 		
 		for (ChatRoom chatRoom : rooms) {
 			this.prepareRoomForFrontEnd(chatRoom);
