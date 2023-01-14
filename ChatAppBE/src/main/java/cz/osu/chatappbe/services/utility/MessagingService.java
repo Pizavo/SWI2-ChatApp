@@ -1,17 +1,16 @@
 package cz.osu.chatappbe.services.utility;
 
-import cz.osu.chatappbe.config.RabbitMQConfig;
 import cz.osu.chatappbe.models.DB.ChatRoom;
 import cz.osu.chatappbe.models.DB.ChatUser;
 import cz.osu.chatappbe.models.DB.Message;
 import cz.osu.chatappbe.models.PayloadMsg;
+import cz.osu.chatappbe.models.PayloadReply;
 import cz.osu.chatappbe.services.models.ChatRoomService;
 import cz.osu.chatappbe.services.models.MessageService;
 import cz.osu.chatappbe.services.models.UserService;
 import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -35,8 +34,8 @@ public class MessagingService {
 	@Autowired
 	private ChatRoomService chatRoomService;
 	
-	public PayloadMsg receivePublicMessage(PayloadMsg msg) {
-		Optional<ChatUser> user = userService.get(msg.getSenderId());
+	public PayloadReply receivePublicMessage(PayloadMsg msg) {
+		/*Optional<ChatUser> user = userService.get(msg.getSenderId());
 		Optional<ChatRoom> room = chatRoomService.getPublicRoom();
 		
 		if (user.isEmpty() || room.isEmpty()) {
@@ -47,14 +46,17 @@ public class MessagingService {
 		
 		this.send(RabbitMQConfig.exchange, message);
 		
-		return msg;
+		return msg;*/
+		
+		return this.receiveMessage(msg);
 	}
 	
-	public PayloadMsg receiveGroupMessage(@Payload PayloadMsg msg) {
+	public PayloadReply receiveGroupMessage(PayloadMsg msg) {
 		// todo: poslat message do queue od všech uživatelů kteří jsou u dané ChatRoomId (GroupId)
 		// todo: asi ulozit zpravu do databaze (vzdy ji uklada ten, co ji odesila)
 		// todo: poslat web socket zpravu aby si uzivatel vyzvedl zpravu z queue pokud je prihlaseny
 		
+		/*
 		Optional<ChatUser> optionalUser = userService.get(msg.getSenderId());
 		Optional<ChatRoom> optionalRoom = chatRoomService.get(msg.getChatId());
 		
@@ -68,22 +70,44 @@ public class MessagingService {
 		Message message = messageService.create(user, room, msg.getContent(), msg.getDate());
 		
 		room.getJoinedUsers().forEach(u -> {
-			if (!u.getId().equals(user.getId())) {
-				this.send("public-queue-" + u.getUsername(), message);
-			}
+			//if (!u.getId().equals(user.getId())) {
+				this.send("queue-" + u.getUsername(), message);
+			//}
 		});
 
 //		String destination = "/chatroom/" + msg.getChatId();
 //		simpMessagingTemplate.convertAndSend(destination, msg);
-		return msg;
+		return msg;*/
+		
+		return this.receiveMessage(msg);
 	}
 	
-	public PayloadMsg receivePrivateMessage(@Payload PayloadMsg msg) {
+	private PayloadReply receiveMessage(PayloadMsg msg) {
+		Optional<ChatUser> optionalUser = userService.get(msg.getSenderId());
+		Optional<ChatRoom> optionalRoom = chatRoomService.get(msg.getChatId());
+		
+		if (optionalUser.isEmpty() || optionalRoom.isEmpty()) {
+			return null;
+		}
+		
+		ChatUser user = optionalUser.get();
+		ChatRoom room = optionalRoom.get();
+		
+		Message message = messageService.create(user, room, msg.getContent(), msg.getDate());
+		
+		room.getJoinedUsers().forEach(u -> {
+			this.send("queue-" + u.getUsername(), message);
+		});
+		
+		return new PayloadReply(msg, room.getId());
+	}
+	
+	public PayloadReply receivePrivateMessage(PayloadMsg msg) {
 		// todo: poslat do queue od sendera a receivera
 		// todo: asi ulozit zpravu do databaze (vzdy ji uklada ten, co ji odesila)
 		// todo: poslat web socket zpravu aby si uzivatel vyzvedl zpravu z queue pokud je prihlaseny
 		
-		Optional<ChatUser> optionalSender = userService.get(msg.getSenderId());
+		/*Optional<ChatUser> optionalSender = userService.get(msg.getSenderId());
 		Optional<ChatRoom> optionalRoom = chatRoomService.get(msg.getChatId());
 		
 		if (optionalSender.isEmpty() || optionalRoom.isEmpty()) {
@@ -103,8 +127,10 @@ public class MessagingService {
 
 //		 url: /user/username/private
 //		simpMessagingTemplate.convertAndSendToUser(optionalReceiver.get().getUsername(), "/private", msg);
-		this.send("public-queue-" + optionalReceiver.get().getUsername(), message);
-		return msg;
+		this.send("queue-" + optionalReceiver.get().getUsername(), message);
+		return msg;*/
+		
+		return this.receiveMessage(msg);
 	}
 	
 	public void send(String exchange, Message message) {

@@ -1,18 +1,18 @@
 package cz.osu.chatappbe.models.DB;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+@Builder
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class ChatUser implements Serializable {
 	@ManyToMany
 	@JoinTable(

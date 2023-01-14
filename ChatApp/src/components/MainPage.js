@@ -15,6 +15,7 @@ const Menu = (props) => {
 	
 	const [activeChat, setActiveChat] = useState()
 	const [privateChats, setPrivateChats] = useState(new Map())
+	const [reload, setReload] = useState(false)
 	
 	const [isLoading, setIsLoading] = useState(true)
 	
@@ -48,16 +49,22 @@ const Menu = (props) => {
 		checkReceivedMessages()
 	})
 	
+	useEffect(() => setReload(false), [reload])
+	
 	// subscribe na dané topicy
 	function onConnected() {
 		// private messages
-		stompClient.subscribe('/user/' + props.user.username + '/private', onPrivateMessageReceived)
+		// stompClient.subscribe('/user/' + props.user.username + '/private', onPrivateMessageReceived)
 		//privateChats.set(props.user.username, []);
 		//setPrivateChats(new Map(privateChats));
 		
 		// public/group messages
-		stompClient.subscribe('/chatroom/public', onPublicMessageReceived)
+		// stompClient.subscribe('/chatroom/public', onPublicMessageReceived)
 		//stompClient.subscribe('/chatroom/1', onGroupMessageReceived);
+		
+		privateChats.forEach((value, key) => {
+			stompClient.subscribe('/chatroom/' + key, onMessageReceived)
+		});
 	}
 	
 	function onError(e) {
@@ -107,8 +114,22 @@ const Menu = (props) => {
 		*/
 	}
 	
+	function onMessageReceived(payload) {
+		const url = LOCALHOST_URL + '/api/queue'
+		const params = new URLSearchParams([['username', props.user.username]])
+		
+		axios.get(url, {params})
+		     .then(result => {
+			     result.data.forEach(i => {
+				     privateChats.get(i.room.id).push(i)
+				     setPrivateChats(new Map(privateChats))
+			     })
+		     })
+		     .catch(error => console.error(error))
+	}
+	
 	function onPublicMessageReceived(payload) {
-		// Vyzvednout zprávu z public-queue-username
+		// Vyzvednout zprávu z queue-username
 		const url = LOCALHOST_URL + '/api/queue'
 		const params = new URLSearchParams([['username', props.user.username]])
 		try {
@@ -154,6 +175,8 @@ const Menu = (props) => {
 				date: new Date().getTime(),
 			}
 			stompClient.send(destination, {}, JSON.stringify(payloadMsg))
+			
+			setReload(true)
 		}
 	}
 	

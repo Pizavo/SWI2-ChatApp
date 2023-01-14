@@ -18,6 +18,6 @@ public class RabbitController {
 	
 	@GetMapping(value = "/api/queue")
 	public List<Message> getMessages(@RequestParam String username) {
-		return this.messagingService.receive("public-queue-" + username);
+		return this.messagingService.receive("queue-" + username);
 	}
 }

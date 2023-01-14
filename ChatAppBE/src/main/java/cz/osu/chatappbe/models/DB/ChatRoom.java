@@ -1,21 +1,19 @@
 package cz.osu.chatappbe.models.DB;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+@Builder
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class ChatRoom implements Serializable {
-	@Setter(AccessLevel.NONE)
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(nullable = false)
@@ -27,7 +25,7 @@ public class ChatRoom implements Serializable {
 	@OneToMany(mappedBy = "room")
 	private List<Message> messages = new ArrayList<>();
 	
-	@Column(nullable = false)
+	@Column(nullable = false, unique = true)
 	private String name;
 	
 	@Column(nullable = false)

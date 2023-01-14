@@ -31,7 +31,7 @@ public class RegistrationService {
 			try {
 				ChatUser user = userService.create(signupForm);
 				
-				rabbitMQService.createQueue("public-queue-" + user.getUsername());
+				rabbitMQService.createQueue("queue-" + user.getUsername());
 				
 				for (ChatUser chatUser : userService.list()) {
 					if (chatUser.getId().equals(user.getId())) {
@@ -43,7 +43,7 @@ public class RegistrationService {
 					userService.addRoom(user, chatRoom);
 					userService.addRoom(chatUser, chatRoom);
 					
-					messageService.create(user, chatRoom, "Hello, " + chatUser.getUsername() + "!");
+//					messageService.create(user, chatRoom, "Hello, " + chatUser.getUsername() + "!");
 				}
 				
 				return new ResponseEntity<>("Successfully registered!", HttpStatus.OK);

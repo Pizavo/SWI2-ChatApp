@@ -1,6 +1,7 @@
 package cz.osu.chatappbe.controllers;
 
 import cz.osu.chatappbe.models.PayloadMsg;
+import cz.osu.chatappbe.models.PayloadReply;
 import cz.osu.chatappbe.services.utility.MessagingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -22,19 +23,21 @@ public class ChatController {
 	}
 	
 	@MessageMapping("/message")
-	@SendTo("/chatroom/public")
-	public PayloadMsg receivePublicMessage(@Payload PayloadMsg msg) {
+//	@SendTo("/chatroom/public")
+	@SendTo("!{'/chatroom/' + result.chatId}")
+	public PayloadReply receivePublicMessage(@Payload PayloadMsg msg) {
 		return messagingService.receivePublicMessage(msg);
 	}
 	
 	@MessageMapping("/group-message")
-	public PayloadMsg receiveGroupMessage(@Payload PayloadMsg msg) {
+	@SendTo("!{'/chatroom/' + result.chatId}")
+	public PayloadReply receiveGroupMessage(@Payload PayloadMsg msg) {
 		return messagingService.receiveGroupMessage(msg);
 	}
 	
 	@MessageMapping("/private-message")
-	//@SendTo("/user/{username}/private")
-	public PayloadMsg receivePrivateMessage(@Payload PayloadMsg msg) {
+	@SendTo("!{'/chatroom/' + result.chatId}")
+	public PayloadReply receivePrivateMessage(@Payload PayloadMsg msg) {
 		return messagingService.receivePrivateMessage(msg);
 	}
 	
