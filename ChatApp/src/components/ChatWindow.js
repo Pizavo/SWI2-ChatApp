@@ -1,7 +1,7 @@
 import {Box, IconButton, Input} from '@mui/material'
 import {styled} from '@mui/material/styles'
 import {SendRounded} from '@mui/icons-material'
-import React, {useRef, useState} from 'react'
+import React, {useEffect, useRef, useState} from 'react'
 
 const TextInput = styled(Input)({
 	color: 'white',
@@ -35,6 +35,12 @@ const ChatWindow = (props) => {
 	
 	function send(e) {
 		e.preventDefault()
+		
+		if(message.length > 250) {
+			alert('Message cannot be longer than 250 characters!')
+			return;
+		}
+		
 		props.sendMessage(message)
 		formRef.current.reset()
 		setMessage('')
@@ -50,6 +56,16 @@ const ChatWindow = (props) => {
 		const options = {year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric'}
 		return new Date(dateTime).toLocaleDateString(undefined, options)
 	}
+	
+	function scrollToBottom() {
+		const chat = document.getElementById('chat')
+		
+		if (chat) {
+			chat.scrollTop = chat.scrollHeight
+		}
+	}
+	
+	useEffect(() => scrollToBottom());
 	
 	return (
 		<>
@@ -89,7 +105,17 @@ const ChatWindow = (props) => {
 								</div>
 							</form>
 						</Box>
-						<Box>
+						<Box id={'chat'} sx={{
+							overflowY: 'auto',
+							overflowX: 'hidden',
+							height: '95%',
+							scrollbarWidth: 'none',
+							msOverflowStyle: 'none',
+							'&::-webkit-scrollbar': {
+								width: 0,
+							},
+							scrollBehavior: 'smooth',
+						}}>
 							{[...props.privateChats.get(props.activeChat.id).map((msg, index) => (
 								<Box key={index} sx={{paddingBottom: '10px', width: '100%', overflow: 'auto'}}>
 									{msg.user.id === props.user.id ? (

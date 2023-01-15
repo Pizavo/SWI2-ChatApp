@@ -68,9 +68,6 @@ public class MessageService {
 		message.getUser().setMessages(new ArrayList<>());
 		message.getUser().setJoinedRooms(new ArrayList<>());
 		
-		/*message.setRoom(null);
-		message.setUser(null);*/
-		
 		return this.gson.toJson(message);
 	}
 	

@@ -1,10 +1,8 @@
 package cz.osu.chatappbe.services.utility;
 
-import cz.osu.chatappbe.models.DB.ChatRoom;
 import cz.osu.chatappbe.models.DB.ChatUser;
 import cz.osu.chatappbe.models.SignupForm;
 import cz.osu.chatappbe.services.models.ChatRoomService;
-import cz.osu.chatappbe.services.models.MessageService;
 import cz.osu.chatappbe.services.models.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +18,6 @@ public class RegistrationService {
 	@Autowired
 	private final ChatRoomService chatRoomService;
 	@Autowired
-	private final MessageService messageService;
-	@Autowired
 	private final RabbitMQService rabbitMQService;
 	
 	public ResponseEntity<String> register(SignupForm signupForm) {
@@ -33,7 +29,7 @@ public class RegistrationService {
 				
 				rabbitMQService.createQueue("queue-" + user.getUsername());
 				
-				for (ChatUser chatUser : userService.list()) {
+				/*for (ChatUser chatUser : userService.list()) {
 					if (chatUser.getId().equals(user.getId())) {
 						continue;
 					}
@@ -42,9 +38,7 @@ public class RegistrationService {
 					
 					userService.addRoom(user, chatRoom);
 					userService.addRoom(chatUser, chatRoom);
-					
-//					messageService.create(user, chatRoom, "Hello, " + chatUser.getUsername() + "!");
-				}
+				}*/
 				
 				return new ResponseEntity<>("Successfully registered!", HttpStatus.OK);
 			} catch (Exception e) {

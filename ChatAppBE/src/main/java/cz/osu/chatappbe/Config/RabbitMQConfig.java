@@ -29,14 +29,6 @@ public class RabbitMQConfig {
 	public Queue queue() {
 		return new Queue(queueName, false);
 	}
-    /*@Bean
-    public DirectExchange directExchange() {
-        return new DirectExchange(exchange);
-    }
-    @Bean
-    public TopicExchange topicExchange() {
-        return new TopicExchange(exchange);
-    }*/
 	
 	@Bean
 	public FanoutExchange fanoutExchange() {

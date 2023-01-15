@@ -1,6 +1,5 @@
 package cz.osu.chatappbe.models;
 
-import cz.osu.chatappbe.models.DB.ChatUser;
 import lombok.*;
 
 import java.util.List;

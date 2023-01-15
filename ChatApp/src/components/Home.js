@@ -9,7 +9,7 @@ const Home = (props) => {
 			{!props.user ? (
 				<Login setUserToken={props.setUserToken} unsetUserToken={props.unsetUserToken}/>
 			) : (
-				<MainPage user={props.user}/>
+				<MainPage user={props.user}  unsetUserToken={props.unsetUserToken}/>
 			)}
 		</div>
 	)

@@ -35,11 +35,11 @@ public class Message implements Serializable {
 	
 	public String toString() {
 		return "Message{" +
-				"id=" + id +
-				", room=" + room.getId() +
-				", user=" + user.getId() +
-				", content='" + content + '\'' +
-				", sendTime=" + sendTime +
-				'}';
+		       "id=" + id +
+		       ", room=" + room.getId() +
+		       ", user=" + user.getId() +
+		       ", content='" + content + '\'' +
+		       ", sendTime=" + sendTime +
+		       '}';
 	}
 }

@@ -36,16 +36,18 @@ const ChatSelection = (props) => {
 		try {
 			await axios.get(url, {params})
 			           .then(async (result) => {
+						   setChatRooms([]);
+						   
 				           result.data.forEach(i => setChatRooms((rooms) => [...rooms, {
 					           id: i.id,
 					           name: i.name,
 					           messages: i.messages,
 				           }]))
+				           
 				           try {
-							   console.log(result.data)
 					           await props.handleChatChange(e, result.data[0]?.id)
 				           } catch (e) {
-					           console.log('No chats available!')
+					           console.info('No chats available!')
 				           }
 				
 				           try {
@@ -58,18 +60,23 @@ const ChatSelection = (props) => {
 					           })
 				           } catch (e) {
 					           console.error(e)
-					           console.log('No messages available!')
+					           console.info('No messages available!')
 				           }
 				           props.setIsLoading(false)
 			           })
 		} catch (e) {
-			console.log('Error in fetching chat rooms!')
+			console.info('Error in fetching chat rooms!')
 		}
 	}
 	
 	function addGroupChat(e) {
 		const name = prompt('Enter the name of the group chat')
 		let users = prompt('Enter the usernames of the users you want to add to the group chat, separated by commas')
+		
+		if(name.length === 0 || users.length === 0) {
+			alert('Group chat name and/or users cannot be empty!')
+			return;
+		}
 		
 		users = users.split(/\s*,\s*/)
 		

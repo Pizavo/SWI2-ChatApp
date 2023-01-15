@@ -8,9 +8,7 @@ import cz.osu.chatappbe.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class ChatRoomService {
@@ -50,16 +48,16 @@ public class ChatRoomService {
 		
 		Optional<ChatUser> optionalSender = userRepository.findById(chatForm.getCreatedBy());
 		
-		if(optionalSender.isEmpty()) {
+		if (optionalSender.isEmpty()) {
 			return null;
 		}
 		
 		ChatUser sender = optionalSender.get();
 		
-		List<ChatUser> users = new ArrayList<>();
+		Set<ChatUser> users = new HashSet<>();
+		users.add(sender);
 		chatForm.getJoinedUserNames().forEach(username -> userRepository.findUserByUsernameIgnoreCase(username).ifPresent(users::add));
 		chatRoom.getJoinedUsers().addAll(users);
-		chatRoom.getJoinedUsers().add(sender);
 		
 		chatRoom = repository.save(chatRoom);
 		
@@ -68,9 +66,6 @@ public class ChatRoomService {
 			user.getJoinedRooms().add(tmpChatRoom1);
 			userRepository.save(user);
 		});
-		
-		sender.addRoom(chatRoom);
-		userRepository.save(sender);
 		
 		return chatRoom;
 	}

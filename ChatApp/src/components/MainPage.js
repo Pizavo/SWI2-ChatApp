@@ -20,6 +20,10 @@ const Menu = (props) => {
 	const [isLoading, setIsLoading] = useState(true)
 	
 	async function handleChatChange(e, newChatId) {
+		if (newChatId === undefined) {
+			props.unsetUserToken()
+		}
+		
 		await setActiveChat(
 			await axios.get(LOCALHOST_URL + '/api/chatroom/' + newChatId)
 			           .then(result => {
@@ -38,33 +42,19 @@ const Menu = (props) => {
 	}, [])
 	
 	useEffect(() => {
-		// pouze pri prvotnim nacteni komponenty
 		let sock = new SockJS(LOCALHOST_URL + '/ws')
 		stompClient = over(sock)
 		stompClient.connect({}, onConnected, onError)
 	}, [])
 	
 	useEffect(() => {
-		// kontrola fronty daneho uzivatele
 		checkReceivedMessages()
 	})
 	
 	useEffect(() => setReload(false), [reload])
 	
-	// subscribe na dané topicy
 	function onConnected() {
-		// private messages
-		// stompClient.subscribe('/user/' + props.user.username + '/private', onPrivateMessageReceived)
-		//privateChats.set(props.user.username, []);
-		//setPrivateChats(new Map(privateChats));
-		
-		// public/group messages
-		// stompClient.subscribe('/chatroom/public', onPublicMessageReceived)
-		//stompClient.subscribe('/chatroom/1', onGroupMessageReceived);
-		
-		privateChats.forEach((value, key) => {
-			stompClient.subscribe('/chatroom/' + key, onMessageReceived)
-		});
+		stompClient.subscribe('/chatroom/public', onMessageReceived)
 	}
 	
 	function onError(e) {
@@ -76,42 +66,18 @@ const Menu = (props) => {
 		
 		const url = LOCALHOST_URL + '/api/queue'
 		const params = new URLSearchParams([['username', props.user.username]])
-		try {
-			const result = axios.get(url, {params})
-			                    .then(result => {
-				                    // ulozit zpravy
-				                    console.log(result.data)
-				
-				                    result.data.forEach(i => {
-					                    //console.log(privateChats);
-					                    privateChats.get(i.room.id).push(i)
-					                    setPrivateChats(new Map(privateChats))
-					
-					                    /*let msgList = [];
-					                    i.messages.forEach(j => msgList.push(j));
-					                    privateChats.set(i.id, msgList);
-					                    setPrivateChats(new Map(privateChats));*/
-				                    })
-			                    })
-		} catch (e) {
-			console.log('Error')
-		}
+		
+		axios.get(url, {params})
+		     .then(result => {
+			     result.data.forEach(i => {
+				     privateChats.get(i.room.id).push(i)
+				     setPrivateChats(new Map(privateChats))
+			     })
+		     })
+		     .catch(error => console.error(error))
 	}
 	
 	function onPrivateMessageReceived(payload) {
-		//let payloadData = JSON.parse(payload.body)
-		
-		/*
-		if (privateChats.get(payloadData.senderName)) {
-		  privateChats.get(payloadData.senderName).push(payloadData);
-		  setPrivateChats(new Map(privateChats));
-		} else {
-		  let list = [];
-		  list.push(payloadData);
-		  privateChats.set(payloadData.senderName, list);
-		  setPrivateChats(new Map(privateChats));
-		}
-		*/
 	}
 	
 	function onMessageReceived(payload) {
@@ -129,27 +95,16 @@ const Menu = (props) => {
 	}
 	
 	function onPublicMessageReceived(payload) {
-		// Vyzvednout zprávu z queue-username
 		const url = LOCALHOST_URL + '/api/queue'
 		const params = new URLSearchParams([['username', props.user.username]])
 		try {
-			const result = axios.get(url, {params})
-			                    .then(result => {
-				                    console.log(result.data)
-				
-				                    result.data.forEach(i => {
-					                    //console.log(privateChats);
-					                    privateChats.get(i.room.id).push(i)
-					                    setPrivateChats(new Map(privateChats))
-					                    //privateChats.get(activeChat).push(i);
-					                    //setPrivateChats(new Map(privateChats));
-					
-					                    //let msgList = [];
-					                    //i.messages.forEach(j => msgList.push(j));
-					                    //privateChats.set(i.id, msgList);
-					                    //setPrivateChats(new Map(privateChats));
-				                    })
-			                    })
+			axios.get(url, {params})
+			     .then(result => {
+				     result.data.forEach(i => {
+					     privateChats.get(i.room.id).push(i)
+					     setPrivateChats(new Map(privateChats))
+				     })
+			     })
 		} catch (e) {
 			console.error('Error')
 		}
@@ -174,6 +129,7 @@ const Menu = (props) => {
 				content: message,
 				date: new Date().getTime(),
 			}
+			
 			stompClient.send(destination, {}, JSON.stringify(payloadMsg))
 			
 			setReload(true)

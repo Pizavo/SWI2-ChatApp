@@ -59,9 +59,9 @@ public class ChatUser implements Serializable {
 	
 	public String toString() {
 		return "ChatUser{" +
-				"id=" + id +
-				", username='" + username + '\'' +
-				", password='" + password + '\'' +
-				'}';
+		       "id=" + id +
+		       ", username='" + username + '\'' +
+		       ", password='" + password + '\'' +
+		       '}';
 	}
 }
